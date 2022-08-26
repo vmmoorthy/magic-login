@@ -1,5 +1,5 @@
 {
-    "name": "maillogin",
+    "name": "magic-login",
     "version": "1.0.0",
     "description": "Let's Login using the email login link.\n Remove the burden of remembering the password.\nNo need to trust the password manager",
     "main": "index.js",
