@@ -105,8 +105,10 @@ Tokens are stored in cookie and the browser automatically sends the token to the
 
 # API
 
-basepath = < baseAddress >/< basePath >
-eg: localhost:8000/login
+`basepath = < baseAddress >/< basePath >`
+eg: `localhost:8000/login`
+
+note: `baseAddress` and `basePath` must be same as that you provided in [config](https://github.com/vmmoorthy/magic-login#config) 
 
 ## LoginRoute API
 
@@ -142,3 +144,10 @@ EmailLink ->> /validate: request with authToken<br/>authToken embedded<br/> on l
 User ->> /statusPing: clientToken
 /statusPing ->> User: accessToken,refresh(cookie)<br/> Authentication has done user logged in
 ```
+
+# authConfirmation - middleware
+
+#### you have to use this function as middle which route you need to protect 
+`app.use('/data,authConfirmation,dataRoute)`
+
+here data route means the Router to get data
