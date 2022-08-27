@@ -1,8 +1,8 @@
 # Magic Login
 
-Let's Login using the email login link
-Remove the burden of remembering the password
-No need to trust the password manager
+Let's Login using the email login link<br/>
+Remove the burden of remembering the password<br/>
+No need to trust the password manager<br/>
 
 # Things to understand
 1. we are using nodemailer to send login link 
@@ -94,3 +94,51 @@ below you must configure the trasporter as  [nodemailer_trasporter](https://node
 |mysqlConnection|-|Before providing this connection you must create a table as directed in the usage section.<br/>Mysql connection where the _maillogin table exists
 |transPortOptions|-|nodemailer's create transport option
 |companyName|Login Application|Name that will appear in the mail
+
+# Tokens
+Tokens are stored in cookie and the browser automatically sends the token to the server 
+|Token name|Validity|Description|
+|--|--|--|
+|clientToken|20 minutes|Used to get the status of client login by calling /statusPing endpoint|
+|accessToken|10 minutes|Used to authenticate client in a faster way(without DB validation)|
+|refresh|1 day|Used to regenerate accessToken after expiration|
+
+# API
+
+basepath = < baseAddress >/< basePath >
+eg: localhost:8000/login
+
+## LoginRoute API
+
+|http Method - path|REQUEST Format|Success Response Format|Description
+|--|--|--|--|
+|[POST] / |body {<br/>email : user@example.com,<br/>uuid : xxx-xxxx-xxx...}|{ message:  Mail has sent to user@example.com }|clientToken cookie send it expires in 20 minutes. At the same time login link sent to the email|
+[GET] /statusPing |-|UserStatus-<br/>&nbsp;&nbsp; Loggedin:<br/>{status:true,,message:"loggedin"}.<br/>&nbsp;&nbsp; Waiting:{status:false,,message:"not loggedin"}.|clientToken automatically sent by the server.With that token validation has conducted.Use this endpoint to get status for every 5 \| 10 seconds.<br/>If client token expired it return 401 http status and error message| 
+|[GET] /status|-|onSuccess : { status:  true, message:  "Loged in" }<br/>otherwise 401 http statusCode sent|validation done by authConfirmation method|
+|[GET] /logout | - |{ message:  "User loged out successfully" }|it removes all the cookies in browser.|
+
+## AdminRoute API
+
+Note : authentication doesn't exist default for adminRoute. You have to provide it explicitly
+
+|http Method - path|REQUEST Format|Success Response Format|Description
+|--|--|--|--|
+|[GET] /blockedList |query {<br/>limit(optional) : < no of users >,<br/>offset : < no of users to skip ><br/>search:< search string >}|{ { total:  < total no of rows >, list:  [{uuid,updateAt,createAt,status,email},...] } }|list of blocked user with search and pagination options|
+[GET] /activityList |query {<br/>limit(optional) : < no of users >,<br/>offset : < no of users to skip ><br/>search:< search string >}|{ { total:  < total no of rows >, list:  [{uuid,updateAt,createAt,status,email},...] } }| list of activity with search and pagination options | 
+|[POST] /blockUsers|body {<br/>emails:[]}|{ status:  true, message:  "Users has blocked" }|TO block users|
+|[POST] /unblockUsers|body {<br/>emails:[]}|{ status:  true, message:  "Users has unblocked" }|TO unblock users|
+|[GET] /logout | body { uuids:[] } |{ status:  true, message:  "Users has loged out" }|Force logout users|
+|[GET] /templates|-|mail tamplate file|`companyName` and `url` are the two ejs parameters that exists in the html file|
+|[POST] /saveTemplate |body { text: < html text > }|{ message:  "File has saved successfully" }|It changes the email template string that you can change.<br/> `companyName` and `url` provided as [ejs](https://ejs.co/) render parameter. |
+
+# Login flow
+
+```mermaid
+sequenceDiagram
+User ->> [POST] / : email , uuid 
+[POST] / ->>User: clientToken (cookie)<br/> Fetch on /statusPing<br/> (every 10seconds)
+EmailLink ->> /validate: request with authToken<br/>authToken embedded<br/> on login link
+/validate ->> User : redirected authentication done to User page
+User ->> /statusPing: clientToken
+/statusPing ->> User: accessToken,refresh(cookie)<br/> Authentication has done user logged in
+```

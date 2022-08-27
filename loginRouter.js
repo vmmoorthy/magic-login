@@ -75,7 +75,7 @@ loginRoute.get('/logout', async (req, res) => {
         if (message || type !== "refresh")
             return res.status(401).json({ message: "Token has invalid" })
         await makeUserLogout(uuid, email)
-        return res.json({ message: "User loged out successfully" })
+        return res.json({ message: "User logged out successfully" })
     } catch (error) {
         console.log(error);
         res.status(500).json({ "message": "something went wrong" })
@@ -113,9 +113,9 @@ loginRoute.get('/statusPing', async (req, res) => {
         if (await isUserLogedIn(uuid, email)) {
             res.cookie("refresh", confirmationToken({ email, uuid, type: "refresh" }, "1d"), { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 })
             res.cookie("accessToken", confirmationToken({ email, uuid, type: "accessToken" }, "10m"))
-            return res.json({ status: true, message: "logedin" })
+            return res.json({ status: true, message: "loggedin" })
         }
-        return res.json({ status: false, message: "not logedin" })
+        return res.json({ status: false, message: "not loggedin" })
     } catch (error) {
         // we have to set 401 when times up and users declines by unsubscribe / ignore
         console.log(error);
@@ -123,4 +123,4 @@ loginRoute.get('/statusPing', async (req, res) => {
     }
 })
 
-loginRoute.get('/status', authConfirmation, (req, res) => res.json({ status: true, message: "Loged in" }))
+loginRoute.get('/status', authConfirmation, (req, res) => res.json({ status: true, message: "Logged in" }))

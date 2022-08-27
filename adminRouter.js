@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { fstat, writeFileSync } from "fs";
+import { writeFileSync } from "fs";
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { getActiveUserList, getBlockedUserList, makeUserBlocked, makeUserlogout, makeUserUnblock } from "./action.js";
