@@ -1,6 +1,6 @@
 {
     "name": "magic-login",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Let's Login using the email login link.\n Remove the burden of remembering the password.\nNo need to trust the password manager",
     "main": "index.js",
     "type": "module",
@@ -9,7 +9,13 @@
         "url": "https://github.com/vmmoorthy/magic-login.git"
     },
     "readme": "https://github.com/vmmoorthy/magic-login/blob/main/README.md",
-    "keywords": ["magic", "login", "mail", "link", "login link"],
+    "keywords": [
+        "magic",
+        "login",
+        "mail",
+        "link",
+        "login link"
+    ],
     "author": "VMMOORTHY <vmmoorthy25@gmail.com>",
     "license": "MIT",
     "dependencies": {
